@@ -1,4 +1,4 @@
-import { MovieDataTypes } from "../GlobalTypes";
+import type { MovieDataTypes } from "../GlobalTypes";
 
 interface MovieProps {
   movie: MovieDataTypes;

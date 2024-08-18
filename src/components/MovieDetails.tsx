@@ -1,9 +1,9 @@
 import StarRating from "./StarRating";
 import { useMovieDetailsFetch } from "../hooks/useMovieDetailsFetch";
 import { useState, useEffect } from "react";
-import { MovieDetailsType, WatchedMovieDataType } from "../GlobalTypes";
 import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
+import type { WatchedMovieDataType } from "../GlobalTypes";
 
 interface MovieDetails {
   selectedId: string;
@@ -18,12 +18,7 @@ const MovieDetails = ({
   watched,
 }: MovieDetails) => {
   const [rating, setRating] = useState<number>(0);
-  const {
-    movieDetails,
-    loading,
-    error,
-  }: { movieDetails: MovieDetailsType; loading: boolean; error: string } =
-    useMovieDetailsFetch(selectedId);
+  const { movieDetails, loading, error } = useMovieDetailsFetch(selectedId);
   const ifWatched = watched.find((each) => each.imdbID === selectedId);
 
   useEffect(
