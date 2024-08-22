@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import Navbar from "./components/Navbar";
-import Search from "./components/Search";
-import Results from "./components/Results";
 import Main from "./components/Main";
 import Box from "./components/Box";
 import MoviesList from "./components/MoviesList";
@@ -12,6 +9,7 @@ import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
 import MovieDetails from "./components/MovieDetails";
 import type { WatchedMovieDataType } from "./GlobalTypes";
+import Header from "./components/Header";
 
 const ls = localStorage.getItem("watched");
 
@@ -44,17 +42,14 @@ export default function App() {
     function () {
       watched.length > 0
         ? localStorage.setItem("watched", JSON.stringify(watched))
-        : null;
+        : localStorage.removeItem("watched");
     },
     [watched]
   );
 
   return (
     <>
-      <Navbar>
-        <Search query={query} getQuery={getQuery} />
-        <Results movies={movies} />
-      </Navbar>
+      <Header query={query} getQuery={getQuery} moviesLenght={movies?.length} />
       <Main>
         <Box>
           {loading && <Loader />}

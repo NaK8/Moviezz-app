@@ -1,4 +1,4 @@
-import { MovieDataTypes } from "../GlobalTypes";
+import type { MovieDataTypes } from "../GlobalTypes";
 import Movie from "./Movie";
 
 interface MoviesListProps {

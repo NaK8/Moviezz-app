@@ -1,9 +1,10 @@
+import { useState, useEffect } from "react";
 import StarRating from "./StarRating";
 import { useMovieDetailsFetch } from "../hooks/useMovieDetailsFetch";
-import { useState, useEffect } from "react";
 import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import type { WatchedMovieDataType } from "../GlobalTypes";
+import { BackIcon } from "./Icons";
 
 interface MovieDetails {
   selectedId: string;
@@ -11,14 +12,16 @@ interface MovieDetails {
   addWatchedMovie: (e: WatchedMovieDataType) => void;
   watched: WatchedMovieDataType[];
 }
+
 const MovieDetails = ({
   selectedId,
   onClose,
   addWatchedMovie,
   watched,
 }: MovieDetails) => {
-  const [rating, setRating] = useState<number>(0);
+  const [rating, setRating] = useState(0);
   const { movieDetails, loading, error } = useMovieDetailsFetch(selectedId);
+
   const ifWatched = watched.find((each) => each.imdbID === selectedId);
 
   useEffect(
@@ -30,36 +33,34 @@ const MovieDetails = ({
         document.title = "Moviezz";
       };
     },
-    [movieDetails.Title]
+    [movieDetails]
   );
 
-  useEffect(
-    function () {
-      function callBack(e: KeyboardEvent) {
-        if (e.code === "Escape") {
-          onClose();
-        }
-      }
-      document.addEventListener("keydown", callBack);
+  useEffect(() => {
+    if (!movieDetails.Title) return;
+    document.title = `Movie | ${movieDetails.Title}`;
 
-      return function () {
-        document.removeEventListener("keydown", callBack);
-      };
-    },
-    [onClose]
-  );
+    return () => {
+      document.title = `Moviezz`;
+    };
+  });
+
+  useEffect(() => {
+    function callBack(e: KeyboardEvent) {
+      e.code === "Escape" && onClose();
+    }
+
+    document.addEventListener("keydown", callBack);
+
+    return () => document.removeEventListener("keydown", callBack);
+  }, [onClose]);
 
   function addNewWatchedMovie() {
-    const newMovie: WatchedMovieDataType = {
-      imdbID: movieDetails.imdbID,
-      Title: movieDetails.Title,
-      Year: movieDetails.Year,
-      Poster: movieDetails.Poster,
+    addWatchedMovie({
+      ...movieDetails,
       runtime: Number(movieDetails.Runtime.split(" ").at(0)),
-      imdbRating: movieDetails.imdbRating,
       userRating: rating,
-    };
-    addWatchedMovie(newMovie);
+    });
   }
 
   return (
@@ -68,10 +69,9 @@ const MovieDetails = ({
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
         <>
-          {" "}
           <header>
             <button className="btn-back" onClick={onClose}>
-              &larr;
+              <BackIcon />
             </button>
             <img
               src={movieDetails.Poster}
@@ -106,7 +106,7 @@ const MovieDetails = ({
                 </>
               ) : (
                 <p>
-                  You already rate this movie with {ifWatched.userRating}
+                  You already rate this movie with {ifWatched.userRating}{" "}
                   <span>⭐</span>
                 </p>
               )}

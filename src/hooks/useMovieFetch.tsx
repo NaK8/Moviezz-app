@@ -1,29 +1,29 @@
 import { useState, useEffect } from "react";
-import { MovieDataTypes } from "../GlobalTypes";
+import type { MovieDataTypes } from "../GlobalTypes";
+
+type FetchTypes = { Search: MovieDataTypes[]; Response: string };
 
 export function useMovieFetch(query: string) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [movies, setMovies] = useState<MovieDataTypes[]>([]);
-  const KEY = "176fddb";
+  const KEY = import.meta.env.VITE_KEY;
 
   useEffect(() => {
     const controller = new AbortController();
     async function FetchMovies() {
       try {
         setLoading(true);
-        setError("");
         const res = await fetch(
           `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
           { signal: controller.signal }
         );
+
         if (!res.ok)
           throw new Error("Something went wrong with fetching movies");
 
-        const {
-          Search,
-          Response,
-        }: { Search: MovieDataTypes[]; Response: string } = await res.json();
+        const { Search, Response }: FetchTypes = await res.json();
+
         if (Response === "False") throw new Error("Movie not found");
 
         setMovies(Search);
@@ -36,13 +36,13 @@ export function useMovieFetch(query: string) {
         setLoading(false);
       }
     }
+
     if (query.length < 3) {
       setMovies([]);
       setError("");
       return;
     }
 
-    // onCloseMovieDetails();
     FetchMovies();
 
     return function () {
