@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { WatchedMovieDataType } from "../GlobalTypes";
 
 interface SummaryPorps {
@@ -7,7 +8,7 @@ interface SummaryPorps {
 const average = (arr: number[]) =>
   arr.reduce((acc, cur, _, arr) => acc + cur / arr.length, 0);
 
-const Summary = ({ watched }: SummaryPorps) => {
+const Summary = memo(({ watched }: SummaryPorps) => {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));
@@ -34,6 +35,6 @@ const Summary = ({ watched }: SummaryPorps) => {
       </div>
     </div>
   );
-};
+});
 
 export default Summary;

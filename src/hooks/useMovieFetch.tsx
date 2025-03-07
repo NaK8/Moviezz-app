@@ -3,11 +3,11 @@ import type { MovieDataTypes } from "../GlobalTypes";
 
 type FetchTypes = { Search: MovieDataTypes[]; Response: string };
 
+const KEY = import.meta.env.VITE_KEY;
 export function useMovieFetch(query: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [movies, setMovies] = useState<MovieDataTypes[]>([]);
-  const KEY = import.meta.env.VITE_KEY;
 
   useEffect(() => {
     const controller = new AbortController();
