@@ -43,10 +43,13 @@ export function useMovieFetch(query: string) {
       return;
     }
 
-    FetchMovies();
+    const setDebounce = setTimeout(() => {
+      FetchMovies();
+    }, 500);
 
     return function () {
       controller.abort();
+      clearTimeout(setDebounce);
     };
   }, [query]);
 

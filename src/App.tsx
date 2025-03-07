@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Main from "./components/Main";
 import Box from "./components/Box";
 import MoviesList from "./components/MoviesList";
@@ -7,9 +7,9 @@ import Summary from "./components/Summary";
 import { useMovieFetch } from "./hooks/useMovieFetch";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
-import MovieDetails from "./components/MovieDetails";
 import type { WatchedMovieDataType } from "./GlobalTypes";
 import Header from "./components/Header";
+const MovieDetails = lazy(() => import("./components/MovieDetails"));
 
 const ls = localStorage.getItem("watched");
 
@@ -60,12 +60,14 @@ export default function App() {
         </Box>
         <Box>
           {selectedId ? (
-            <MovieDetails
-              selectedId={selectedId}
-              onClose={closeMovieDetails}
-              addWatchedMovie={getNewWatchedMovie}
-              watched={watched}
-            />
+            <Suspense fallback={<Loader />}>
+              <MovieDetails
+                selectedId={selectedId}
+                onClose={closeMovieDetails}
+                addWatchedMovie={getNewWatchedMovie}
+                watched={watched}
+              />
+            </Suspense>
           ) : (
             <>
               <Summary watched={watched} />

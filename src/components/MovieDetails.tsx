@@ -24,27 +24,6 @@ const MovieDetails = ({
 
   const ifWatched = watched.find((each) => each.imdbID === selectedId);
 
-  useEffect(
-    function () {
-      if (!movieDetails.Title) return;
-      document.title = `Movie | ${movieDetails.Title}`;
-
-      return function () {
-        document.title = "Moviezz";
-      };
-    },
-    [movieDetails]
-  );
-
-  useEffect(() => {
-    if (!movieDetails.Title) return;
-    document.title = `Movie | ${movieDetails.Title}`;
-
-    return () => {
-      document.title = `Moviezz`;
-    };
-  });
-
   useEffect(() => {
     function callBack(e: KeyboardEvent) {
       e.code === "Escape" && onClose();
@@ -65,6 +44,9 @@ const MovieDetails = ({
 
   return (
     <div className="details">
+      <title>
+        {movieDetails.Title ? `Moviez | ${movieDetails.Title}` : "Moviez"}
+      </title>
       {loading && <Loader />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
@@ -73,10 +55,12 @@ const MovieDetails = ({
             <button className="btn-back" onClick={onClose}>
               <BackIcon />
             </button>
-            <img
-              src={movieDetails.Poster}
-              alt={`Poster of ${movieDetails.Title}`}
-            />
+            {movieDetails.Poster && (
+              <img
+                src={movieDetails.Poster}
+                alt={`Poster of ${movieDetails.Title}`}
+              />
+            )}
             <div className="details-overview">
               <h2>{movieDetails.Title}</h2>
               <p>
