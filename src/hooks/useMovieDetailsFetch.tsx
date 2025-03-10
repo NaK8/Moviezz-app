@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
 import type { MovieDetailsType } from "../GlobalTypes";
 
+const movieInit = {
+  imdbID: "",
+  Title: "",
+  Year: "",
+  Poster: "",
+  Runtime: "",
+  Released: "",
+  imdbRating: 0,
+  Plot: "",
+  Actors: "",
+  Director: "",
+  userRating: 0,
+};
+
 export function useMovieDetailsFetch(selectedId: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [movieDetails, setMovieDetails] = useState<MovieDetailsType>({
-    imdbID: "",
-    Title: "",
-    Year: "",
-    Poster: "",
-    Runtime: "",
-    Released: "",
-    imdbRating: 0,
-    Plot: "",
-    Actors: "",
-    Director: "",
-    userRating: 0,
-  });
+  const [movieDetails, setMovieDetails] = useState<MovieDetailsType>(movieInit);
+  const [cacheMovie, setCacheMovie] = useState<MovieDetailsType[]>([]);
 
   const KEY = import.meta.env.VITE_KEY;
   useEffect(
@@ -37,6 +40,7 @@ export function useMovieDetailsFetch(selectedId: string) {
           if (data.Responce === "False") throw new Error("Movie not found");
 
           setMovieDetails(data);
+          setCacheMovie((cache) => [...cache, data]);
           setLoading(false);
           setError("");
         } catch (err: unknown) {
@@ -47,7 +51,12 @@ export function useMovieDetailsFetch(selectedId: string) {
           setLoading(false);
         }
       }
-      fetchMoviesDetails();
+      const cacheId = cacheMovie.findIndex((c) => c.imdbID === selectedId);
+      if (cacheMovie[cacheId]) {
+        setMovieDetails(cacheMovie[cacheId]);
+      } else {
+        fetchMoviesDetails();
+      }
     },
     [selectedId]
   );
