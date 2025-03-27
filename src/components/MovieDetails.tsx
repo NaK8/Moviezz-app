@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import StarRating from "./StarRating";
 import { useMovieDetailsFetch } from "../hooks/useMovieDetailsFetch";
-import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import type { WatchedMovieDataType } from "../GlobalTypes";
 import { BackIcon } from "./Icons";
+import MovieDetailsSkeleton from "./MovieDetailsSkeleton";
 
 interface MovieDetails {
   selectedId: string;
@@ -47,7 +47,7 @@ const MovieDetails = ({
       <title>
         {movieDetails.Title ? `Moviez | ${movieDetails.Title}` : "Moviez"}
       </title>
-      {loading && <Loader />}
+      {loading && <MovieDetailsSkeleton />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
         <>

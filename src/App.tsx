@@ -1,14 +1,13 @@
-import { lazy, Suspense, useEffect, useState } from "react";
-import Main from "./components/Main";
+import { lazy, useEffect, useState } from "react";
 import Box from "./components/Box";
 import MoviesList from "./components/MoviesList";
 import WatchMovieList from "./components/WatchMovieList";
 import Summary from "./components/Summary";
 import { useMovieFetch } from "./hooks/useMovieFetch";
-import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
 import type { WatchedMovieDataType } from "./GlobalTypes";
 import Header from "./components/Header";
+import MoviesListSkeleton from "./components/MoviesListSkeleton";
 const MovieDetails = lazy(() => import("./components/MovieDetails"));
 
 const ls = localStorage.getItem("watched");
@@ -50,9 +49,9 @@ export default function App() {
   return (
     <>
       <Header query={query} getQuery={getQuery} moviesLenght={movies?.length} />
-      <Main>
+      <main className="main">
         <Box>
-          {loading && <Loader />}
+          {loading && <MoviesListSkeleton />}
           {!loading && !error && (
             <MoviesList getMovie={setSelectedId} movies={movies} />
           )}
@@ -60,14 +59,12 @@ export default function App() {
         </Box>
         <Box>
           {selectedId ? (
-            <Suspense fallback={<Loader />}>
-              <MovieDetails
-                selectedId={selectedId}
-                onClose={closeMovieDetails}
-                addWatchedMovie={getNewWatchedMovie}
-                watched={watched}
-              />
-            </Suspense>
+            <MovieDetails
+              selectedId={selectedId}
+              onClose={closeMovieDetails}
+              addWatchedMovie={getNewWatchedMovie}
+              watched={watched}
+            />
           ) : (
             <>
               <Summary watched={watched} />
@@ -75,7 +72,7 @@ export default function App() {
             </>
           )}
         </Box>
-      </Main>
+      </main>
     </>
   );
 }

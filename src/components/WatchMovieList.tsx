@@ -1,4 +1,4 @@
-import { WatchedMovieDataType } from "../GlobalTypes";
+import type { WatchedMovieDataType } from "../GlobalTypes";
 
 interface WatchMovieListProps {
   watched: WatchedMovieDataType[];
