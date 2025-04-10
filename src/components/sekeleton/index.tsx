@@ -8,7 +8,7 @@ interface SkeletonType {
 
 const Skeleton = ({ height, width, borderRadius }: SkeletonType) => {
   return (
-    <div className={styles.skeleton} style={{ height, width, borderRadius }} />
+    <span className={styles.skeleton} style={{ height, width, borderRadius }} />
   );
 };
 

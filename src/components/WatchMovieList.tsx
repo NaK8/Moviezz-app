@@ -1,14 +1,12 @@
-import type { WatchedMovieDataType } from "../GlobalTypes";
+import { getMoviesContext } from "../context/MoviesContext";
 
-interface WatchMovieListProps {
-  watched: WatchedMovieDataType[];
-  deleteWatchedList: (e: string) => void;
-}
+const WatchMovieList = () => {
+  const { watched, setWatched } = getMoviesContext();
 
-const WatchMovieList = ({
-  watched,
-  deleteWatchedList,
-}: WatchMovieListProps) => {
+  function deleteWatchedList(id: string) {
+    setWatched(watched.filter((each) => each.imdbID !== id));
+  }
+
   return (
     <ul className="list">
       {watched.map((movie) => (

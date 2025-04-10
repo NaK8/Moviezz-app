@@ -2,27 +2,20 @@ import { useState, useEffect } from "react";
 import StarRating from "./StarRating";
 import { useMovieDetailsFetch } from "../hooks/useMovieDetailsFetch";
 import ErrorMessage from "./ErrorMessage";
-import type { WatchedMovieDataType } from "../GlobalTypes";
 import { BackIcon } from "./Icons";
-import MovieDetailsSkeleton from "./MovieDetailsSkeleton";
+import MovieDetailsSkeleton from "./ui-skeletons/MovieDetailsSkeleton";
+import { getMoviesContext } from "../context/MoviesContext";
 
-interface MovieDetails {
-  selectedId: string;
-  onClose: () => void;
-  addWatchedMovie: (e: WatchedMovieDataType) => void;
-  watched: WatchedMovieDataType[];
-}
-
-const MovieDetails = ({
-  selectedId,
-  onClose,
-  addWatchedMovie,
-  watched,
-}: MovieDetails) => {
+const MovieDetails = () => {
+  const { selectedId, setWatched, watched, setSelectedId } = getMoviesContext();
   const [rating, setRating] = useState(0);
-  const { movieDetails, loading, error } = useMovieDetailsFetch(selectedId);
+  const { movieDetails, loading, error } = useMovieDetailsFetch(selectedId!);
 
   const ifWatched = watched.find((each) => each.imdbID === selectedId);
+
+  function onClose() {
+    setSelectedId(null);
+  }
 
   useEffect(() => {
     function callBack(e: KeyboardEvent) {
@@ -34,19 +27,38 @@ const MovieDetails = ({
     return () => document.removeEventListener("keydown", callBack);
   }, [onClose]);
 
+  useEffect(
+    function () {
+      watched.length > 0
+        ? localStorage.setItem("watched", JSON.stringify(watched))
+        : localStorage.removeItem("watched");
+    },
+    [watched]
+  );
+
   function addNewWatchedMovie() {
-    addWatchedMovie({
+    const newWatched = {
       ...movieDetails,
       runtime: Number(movieDetails.Runtime.split(" ").at(0)),
       userRating: rating,
-    });
+    };
+    setWatched([...watched, newWatched]);
   }
+
+  const {
+    Actors,
+    Director,
+    Plot,
+    Poster,
+    Released,
+    Runtime,
+    Title,
+    imdbRating,
+  } = movieDetails;
 
   return (
     <div className="details">
-      <title>
-        {movieDetails.Title ? `Moviez | ${movieDetails.Title}` : "Moviez"}
-      </title>
+      <title>{Title ? `Moviez | ${Title}` : "Moviez"}</title>
       {loading && <MovieDetailsSkeleton />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
@@ -55,20 +67,15 @@ const MovieDetails = ({
             <button className="btn-back" onClick={onClose}>
               <BackIcon />
             </button>
-            {movieDetails.Poster && (
-              <img
-                src={movieDetails.Poster}
-                alt={`Poster of ${movieDetails.Title}`}
-              />
-            )}
+            {Poster && <img src={Poster} alt={`Poster of ${Title}`} />}
             <div className="details-overview">
-              <h2>{movieDetails.Title}</h2>
+              <h2>{Title}</h2>
               <p>
-                {movieDetails.Released} &bull; {movieDetails.Runtime}
+                {Released} &bull; {Runtime}
               </p>
               <p>
                 <span>⭐</span>
-                {movieDetails.imdbRating} IMDB Rating
+                {imdbRating} IMDB Rating
               </p>
             </div>
           </header>
@@ -96,10 +103,10 @@ const MovieDetails = ({
               )}
             </div>
             <p>
-              <em>{movieDetails.Plot}</em>
+              <em>{Plot}</em>
             </p>
-            <p>Starring: {movieDetails.Actors}</p>
-            <p>Directed By {movieDetails.Director}</p>
+            <p>Starring: {Actors}</p>
+            <p>Directed By {Director}</p>
           </section>
         </>
       )}

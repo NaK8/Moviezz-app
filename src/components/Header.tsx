@@ -1,13 +1,9 @@
-import { ElementRef, useEffect, useRef } from "react";
+import { ComponentRef, useEffect, useRef } from "react";
+import { getMoviesContext } from "../context/MoviesContext";
 
-interface HeaderProps {
-  query: string;
-  getQuery: (e: string) => void;
-  moviesLenght: number;
-}
-
-const Header = ({ query, getQuery, moviesLenght }: HeaderProps) => {
-  const refer = useRef<ElementRef<"input">>(null);
+const Header = () => {
+  const { query, setQuery, moviesCount } = getMoviesContext();
+  const refer = useRef<ComponentRef<"input">>(null);
 
   useEffect(() => {
     function handleFocus(e: KeyboardEvent) {
@@ -18,7 +14,7 @@ const Header = ({ query, getQuery, moviesLenght }: HeaderProps) => {
     document.addEventListener("keydown", handleFocus);
 
     return () => document.removeEventListener("keydown", handleFocus);
-  }, [getQuery, query]);
+  }, [setQuery, query]);
 
   return (
     <header>
@@ -32,11 +28,11 @@ const Header = ({ query, getQuery, moviesLenght }: HeaderProps) => {
           type="text"
           placeholder="Search movies..."
           value={query}
-          onChange={(e) => getQuery(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
           ref={refer}
         />
         <p className="num-results">
-          Found <strong>{moviesLenght}</strong> results
+          Found <strong>{moviesCount}</strong> results
         </p>
       </nav>
     </header>

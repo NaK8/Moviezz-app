@@ -1,15 +1,16 @@
+import { getMoviesContext } from "../context/MoviesContext";
 import type { MovieDataTypes } from "../GlobalTypes";
 
 interface MoviesListProps {
   movies: MovieDataTypes[];
-  getMovie: (e: string) => void;
 }
 
-const MoviesList = ({ movies, getMovie }: MoviesListProps) => {
+const MoviesList = ({ movies }: MoviesListProps) => {
+  const { setSelectedId } = getMoviesContext();
   return (
     <ul className="list list-movies">
       {movies?.map((movie) => (
-        <li key={movie.imdbID} onClick={() => getMovie(movie.imdbID)}>
+        <li key={movie.imdbID} onClick={() => setSelectedId(movie.imdbID)}>
           <img src={movie.Poster} alt={`${movie.Title} poster`} />
           <h3>{movie.Title}</h3>
           <div>

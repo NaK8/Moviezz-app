@@ -1,4 +1,4 @@
-import Skeleton from "./sekeleton";
+import Skeleton from "../sekeleton";
 
 const MoviesListSkeleton = () => {
   return (
